@@ -50,7 +50,7 @@ describe('Test char function', () => {
             expect(getObjectValue(resultA)).toStrictEqual('A');
 
             const resultMax = testFunction.calculate(NumberValueObject.create(255));
-            expect(getObjectValue(resultMax)).toStrictEqual('\u00ff');
+            expect(getObjectValue(resultMax)).toStrictEqual('\u00FF');
         });
 
         it('Value is array', () => {
