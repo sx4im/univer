@@ -66,7 +66,7 @@ export class Char extends BaseFunction {
 
         const numberValue = Math.floor(+numberObject.getValue());
 
-        if (numberValue <= 0) {
+        if (numberValue <= 0 || numberValue > 255) {
             return ErrorValueObject.create(ErrorType.VALUE);
         }
 

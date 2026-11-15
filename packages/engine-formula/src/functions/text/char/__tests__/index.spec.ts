@@ -32,6 +32,24 @@ describe('Test char function', () => {
             expect(getObjectValue(result)).toStrictEqual('{');
         });
 
+        it('Number is greater than 255', () => {
+            for (const code of [256, 8364, 65536, 65601]) {
+                const number = NumberValueObject.create(code);
+                const result = testFunction.calculate(number);
+                expect(getObjectValue(result)).toStrictEqual(ErrorType.VALUE);
+            }
+        });
+
+        it('Number is within 1 and 255', () => {
+            const number = NumberValueObject.create(65);
+            const result = testFunction.calculate(number);
+            expect(getObjectValue(result)).toStrictEqual('A');
+
+            const maxNumber = NumberValueObject.create(255);
+            const maxResult = testFunction.calculate(maxNumber);
+            expect(getObjectValue(maxResult)).toStrictEqual('ÿ');
+        });
+
         it('Number is negative', () => {
             const number = NumberValueObject.create(-2.34);
             const result = testFunction.calculate(number);
@@ -69,7 +87,7 @@ describe('Test char function', () => {
                 column: 0,
             });
             const result2 = testFunction.calculate(number2);
-            expect(getObjectValue(result2)).toStrictEqual('˒');
+            expect(getObjectValue(result2)).toStrictEqual(ErrorType.VALUE);
 
             const number3 = NumberValueObject.create(28);
             const result3 = testFunction.calculate(number3);
