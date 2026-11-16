@@ -243,7 +243,13 @@ export const getNumfmtParseValueFilter = (value: string, options: ParseOptions =
             const normalized = value.replace(CURRENCY_SYMBOL_PREFIX_REG, '').trim();
 
             if (normalized.includes(',')) {
-                const validGrouping = /^-?\d{1,3}(,\d{3})*(\.\d+)?$/.test(normalized);
+                // Accounting negatives wrap the number in parentheses, e.g. '($1,000)'
+                // or '(1,234)'. Validate the grouping on the unwrapped number.
+                let grouped = normalized;
+                if (grouped.startsWith('(') && grouped.endsWith(')')) {
+                    grouped = grouped.slice(1, -1).replace(CURRENCY_SYMBOL_PREFIX_REG, '').trim();
+                }
+                const validGrouping = /^-?\d{1,3}(,\d{3})*(\.\d+)?$/.test(grouped);
                 if (!validGrouping) return null;
             }
         }

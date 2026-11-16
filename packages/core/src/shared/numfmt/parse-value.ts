@@ -323,6 +323,11 @@ export function parseNumber(value: string, options: ParseOptions = {}): ParseDat
         index++;
     }
 
+    // Parentheses must balance: '(5' is not a negative number.
+    if (openParen !== closeParen) {
+        return null;
+    }
+
     if (index !== value.length) {
         return null;
     }
@@ -350,6 +355,11 @@ export function parseNumber(value: string, options: ParseOptions = {}): ParseDat
             : currencySymbol + currencyFormat;
     } else if (grouping) {
         format = number.includes('.') ? '#,##0.00' : '#,##0';
+    } else if (openParen && closeParen) {
+        // Accounting negatives, e.g. '(5)': without a format the parsed value
+        // is discarded by callers that only accept formatted numbers (VALUE,
+        // cell input), so the value falls back to text and becomes #VALUE!.
+        format = number.includes('.') ? '#,##0.00_);(#,##0.00)' : '#,##0_);(#,##0)';
     }
 
     const result: ParseData<number> = { v: numberValue * sign };

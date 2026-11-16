@@ -45,9 +45,15 @@ const tests: Array<[string, number | boolean | null, string | null]> = [
     ['-12.34 ', -12.34, null],
     ['- 12.34 ', -12.34, null],
     ['-     12.34 ', -12.34, null],
-    ['(12.34) ', -12.34, null],
+    ['(12.34) ', -12.34, '#,##0.00_);(#,##0.00)'],
+    ['(5)', -5, '#,##0_);(#,##0)'],
+    ['($1,000)', -1000, '$#,##0'],
+    ['($1,000.50)', -1000.5, '$#,##0.00'],
+    ['(1,234)', -1234, '#,##0'],
+    ['(5', null, null],
+    ['(1,234', null, null],
     ['((12.34)) ', null, null],
-    ['( 12.34 ) ', -12.34, null],
+    ['( 12.34 ) ', -12.34, '#,##0.00_);(#,##0.00)'],
     ['(-12.34) ', null, null],
     ['1,234,443', 1234443, '#,##0'],
     ['1,234,4434', 12344434, '#,##0'], // Same as Sheets
@@ -662,6 +668,10 @@ numfmtTest('parseNumber', (t) => {
             t.equal(p.z ?? null, expectedZ, `formatOf("${input}")`);
         }
     });
+
+    // the accounting format assigned to parenthesised negatives must render back as parentheses
+    t.equal(format('#,##0_);(#,##0)', -5), '(5)');
+    t.equal(format('#,##0.00_);(#,##0.00)', -12.34), '(12.34)');
 });
 
 numfmtTest('parseNumber locale support', (t) => {

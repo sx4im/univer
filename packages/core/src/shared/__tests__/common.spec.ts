@@ -255,6 +255,21 @@ describe('Test common', () => {
         const cell = { v: 'text', p: null, f: null, si: null } as ICellData;
         expect(covertCellValue(cell)).toBe(cell);
 
+        expect(covertCellValue('(5)')).toEqual({
+            v: -5,
+            p: null,
+            f: null,
+            si: null,
+            s: { n: { pattern: '#,##0_);(#,##0)' } },
+        });
+        expect(covertCellValue('($1,000)')).toEqual({
+            v: -1000,
+            p: null,
+            f: null,
+            si: null,
+            s: { n: { pattern: '$#,##0' } },
+        });
+
         const mixedValues = [
             [1, '=A1'],
             ['2%', null],
