@@ -85,6 +85,11 @@ describe('Test value function', () => {
             expect(getObjectValue(result4)).toStrictEqual(41255);
         });
 
+        it('parses parenthesized negatives', () => {
+            expect(getObjectValue(testFunction.calculate(StringValueObject.create('(5)')))).toStrictEqual(-5);
+            expect(getObjectValue(testFunction.calculate(StringValueObject.create('($1,000)')))).toStrictEqual(-1000);
+        });
+
         it('uses the date system bound to date text', () => {
             const date1900 = StringValueObject.create('1904-1-1').withDateSystem(DateSystem.Date1900);
             const date1904 = StringValueObject.create('1904-1-1').withDateSystem(DateSystem.Date1904);

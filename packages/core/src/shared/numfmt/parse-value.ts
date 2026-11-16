@@ -352,6 +352,14 @@ export function parseNumber(value: string, options: ParseOptions = {}): ParseDat
         format = number.includes('.') ? '#,##0.00' : '#,##0';
     }
 
+    if (openParen && closeParen && !format) {
+        // Parenthesized negatives such as `(5)` are accounting-style numbers.
+        // Give them an explicit format so callers that require one (VALUE,
+        // arithmetic coercion, cell typing) accept them as numbers.
+        const accountingFormat = number.includes('.') ? '#,##0.00' : '#,##0';
+        format = `${accountingFormat}_);(${accountingFormat})`;
+    }
+
     const result: ParseData<number> = { v: numberValue * sign };
     if (format) {
         result.z = format;

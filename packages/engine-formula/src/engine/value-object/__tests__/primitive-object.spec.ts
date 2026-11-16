@@ -74,6 +74,12 @@ describe('StringValueObject', () => {
         ).toBe(43921);
     });
 
+    it('converts parenthesized negatives to numbers', () => {
+        expect(StringValueObject.create('(5)').convertToNumberObjectValue().getValue()).toBe(-5);
+        expect(StringValueObject.create('(5)').plus(NumberValueObject.create(1)).getValue()).toBe(-4);
+        expect(StringValueObject.create('($1,000)').convertToNumberObjectValue().getValue()).toBe(-1000);
+    });
+
     it('does not reuse a hyperlink object as a plain string', () => {
         const hyperlink = StringValueObject.create('https://example.com/context-cache', {
             isHyperlink: true,

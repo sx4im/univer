@@ -252,6 +252,8 @@ describe('Test common', () => {
 
         expect(covertCellValue('=SUM(1,2)')).toEqual({ f: '=SUM(1,2)', v: null, p: null, si: null });
         expect(covertCellValue(1)).toEqual({ v: 1, p: null, f: null, si: null });
+        expect(covertCellValue('(5)')).toEqual({ v: -5, p: null, f: null, si: null, s: { n: { pattern: '#,##0_);(#,##0)' } } });
+        expect(covertCellValue('($1,000)')).toEqual({ v: -1000, p: null, f: null, si: null, s: { n: { pattern: '$#,##0' } } });
         const cell = { v: 'text', p: null, f: null, si: null } as ICellData;
         expect(covertCellValue(cell)).toBe(cell);
 

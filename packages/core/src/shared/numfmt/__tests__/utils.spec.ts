@@ -15,7 +15,8 @@
  */
 
 import { describe, expect, it } from 'vitest';
-import { isPatternEqualWithoutDecimal } from '../utils';
+import { format } from '../api';
+import { getNumfmtParseValueFilter, isPatternEqualWithoutDecimal } from '../utils';
 
 describe('isPatternEqualWithoutDecimal', () => {
     it('isPatternEqualWithoutDecimal', () => {
@@ -23,5 +24,26 @@ describe('isPatternEqualWithoutDecimal', () => {
         expect(isPatternEqualWithoutDecimal('_(###0;-###0.00', '_(###0;[red]-###0.00')).toBe(false);
         expect(isPatternEqualWithoutDecimal('_(###00.0;-###0.00', '_(###0;[red]-###0.00')).toBe(false);
         expect(isPatternEqualWithoutDecimal('_(###0;-###0.00', '_(###0.00;-###0.00')).toBe(true);
+    });
+});
+
+describe('getNumfmtParseValueFilter', () => {
+    it('accepts parenthesized negatives', () => {
+        expect(getNumfmtParseValueFilter('(5)')).toEqual({ v: -5, z: '#,##0_);(#,##0)' });
+        expect(getNumfmtParseValueFilter('(1,000)')).toEqual({ v: -1000, z: '#,##0' });
+        expect(getNumfmtParseValueFilter('($1,000)')).toEqual({ v: -1000, z: '$#,##0' });
+        expect(getNumfmtParseValueFilter('(12.34)')).toEqual({ v: -12.34, z: '#,##0.00_);(#,##0.00)' });
+    });
+
+    it('still rejects invalid groupings and unbalanced parens', () => {
+        expect(getNumfmtParseValueFilter('($1,00)')).toBeNull();
+        expect(getNumfmtParseValueFilter('(1,00)')).toBeNull();
+        expect(getNumfmtParseValueFilter('($1,000')).toBeNull();
+        expect(getNumfmtParseValueFilter('(1,000')).toBeNull();
+    });
+
+    it('formats parenthesized negatives back with parens', () => {
+        expect(format('#,##0_);(#,##0)', -5)).toBe('(5)');
+        expect(format('#,##0.00_);(#,##0.00)', -12.34)).toBe('(12.34)');
     });
 });
